@@ -1,0 +1,61 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-config
+  namespace: iterable
+data:
+  index.html: |
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-config
+  namespace: iterable
+data:
+  index.html: |
+    server {
+        server_name links.nextpass.io;
+
+    listen 80;
+        listen [::]:80;
+
+    location /apple-app-site-association {
+         if ($http_referer !~* ^https?://links\.iterable\.com/apple-app-site-association) {
+             add_header Content-Type application/json;
+             return 200 '{"applinks":{"apps":[],"details":[{"appID":"VCNA82Y6UU.com.cdbv.nextpass","paths":["/a/*"]}]}}';
+        }
+
+        proxy_pass https://links.iterable.com;}        
+
+  location /.well-known/assetlinks.json {
+         if ($http_referer !~* ^https?://links\.iterable\.com/apple-app-site-association) {
+             add_header Content-Type application/json;
+             return 200 '{"applinks":{"apps":[],"details":[{"appID":"VCNA82Y6UU.com.cdbv.nextpass","paths":["/a/*"]}]}}';
+        }
+
+        proxy_pass https://links.iterable.com;}
+   location / {
+        proxy_pass https://links.iterable.com;
+        proxy_set_header Host links.nextpass.io;}
+
+    server {
+        server_name links.nextpass.io;
+
+        listen 443 ssl;
+        listen [::]:443 ssl;
+
+    ssl_certificate /etc/nginx/links.nextpass.io.crt;
+    ssl_certificate_key /etc/nginx/links.nextpass.io.key;
+
+
+    location /apple-app-site-association {
+         if ($http_referer !~* ^https?://links\.iterable\.com/apple-app-site-association) {
+             add_header Content-Type application/json;
+             return 200 '{"applinks":{"apps":[],"details":[{"appID":"VCNA82Y6UU.com.cdbv.nextpass","paths":["/a/*"]}]}}';
+        }
+        proxy_pass https://links.iterable.com;}          
+    location /.well-known/assetlinks.json {
+         if ($http_referer !~* ^https?://links\.iterable\.com/apple-app-site-association) {
+             add_header Content-Type application/json;
+             return 200 '{"applinks":{"apps":[],"details":[{"appID":"VCNA82Y6UU.com.cdbv.nextpass","paths":["/a/*"]}]}}';
+        }
+        proxy_pass https://links.iterable.com;}
